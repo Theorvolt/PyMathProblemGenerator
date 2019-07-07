@@ -11,7 +11,9 @@ from PIL import Image
 from wolframclient.language import Global
 from PyQt5.QtGui import QIcon, QPixmap
 import sys
-import sip
+import oauthlib
+import oauthlib.oauth1
+import wolframclient.utils.json
 
 class mywindow(QtWidgets.QMainWindow):
  
@@ -20,6 +22,7 @@ class mywindow(QtWidgets.QMainWindow):
 		super(mywindow, self).__init__()
 		print(session.evaluate('''Directory[]'''))
 		self.imageQuestion = False
+		self.setFixedSize(800,600)
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 
@@ -45,20 +48,21 @@ class mywindow(QtWidgets.QMainWindow):
 		# to access difficulty do self.ui.difficultybox.currentText()
 
 	def refresh(self):
-		if self.ui.verticalLayout_5.count() < 3:
+		if self.ui.verticalLayout_5.count() < 2:
 			return
 		else:
-			if self.ui.verticalLayout.count() == 4:
+			if self.ui.verticalLayout.count() == 3:
 				self.ui.verticalLayout.removeWidget(self.label1)
 				self.label1.deleteLater()
 				self.label1 = None
 
-			self.ui.verticalLayout_5.removeWidget(self.canvasQ)
-			self.canvasQ.deleteLater()
-			self.canvasQ = None
+			qBox = self.ui.verticalLayout_5.itemAt(1)
+			self.ui.verticalLayout_5.removeItem(qBox)
+
 			self.ui.verticalLayout.removeWidget(self.canvasA)
 			self.canvasA.deleteLater()
 			self.canvasA = None
+
 
 	def refreshSettings(self):
 		self.ui.stackedWidget.setCurrentIndex(1)
@@ -70,6 +74,7 @@ class mywindow(QtWidgets.QMainWindow):
 
 
 	def newQuestion(self):
+
 		topic=self.ui.topicbox.currentText()
 		difficulty=self.ui.difficultybox.currentText()
 		self.ui.stackedWidget.setCurrentIndex(2)
@@ -78,31 +83,41 @@ class mywindow(QtWidgets.QMainWindow):
 		a=qa[1]
 		img = qa[2]
 
+		self.questionDisplay = QtWidgets.QHBoxLayout()
+		self.questionDisplay.setObjectName("questionDisplay")
+		spaceLeft= QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+		self.questionDisplay.addItem(spaceLeft)
 		bg = self.palette().window().color()
 		cl = (bg.redF(), bg.greenF(), bg.blueF())
 		self.question = Figure(facecolor=cl,edgecolor=cl)
 		self.canvasQ = FigureCanvas(self.question)
-		self.ui.verticalLayout_5.addWidget(self.canvasQ)
+		self.questionDisplay.addWidget(self.canvasQ)
 
 		self.question.suptitle(q,
 				x=0.0, y=0.5, 
 				horizontalalignment='left',
 				verticalalignment='bottom',
 				fontsize=10)
-		#self.question.text(x=0.0,y=0.5,s="HELLO $2^{3+4}$")
+
 		self.canvasQ.draw()
+
+		spaceRight = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+		self.questionDisplay.addItem(spaceRight)
+		self.ui.verticalLayout_5.addLayout(self.questionDisplay)		
+
+
 
 		self.answer = Figure(facecolor=cl,edgecolor=cl)
 		self.canvasA = FigureCanvas(self.answer)
-
 		self.ui.verticalLayout.addWidget(self.canvasA)
 		self.answer.suptitle(a,
 				x=0.0, y=0.6, 
 				horizontalalignment='left',
 				verticalalignment='top',
 				fontsize=10)
-		#self.answer.text(x=0.0,y=0.5,s="HELLO $2^{3+4}$")
-		self.canvasA.draw() # dies here
+		self.canvasA.draw()
+
+
 
 		if img != 0:
 			self.imageQuestion = True
@@ -117,13 +132,15 @@ class mywindow(QtWidgets.QMainWindow):
 			self.imageQuestion = False
 
 
+
 		
 		# add bit with getting information from mathematica then setting all the required fields
 
 	def deleteOldQuestion(self):
-		self.ui.verticalLayout_5.removeWidget(self.canvasQ)
-		self.canvasQ.deleteLater()
-		self.canvasQ = None
+
+		qBox = self.ui.verticalLayout_5.itemAt(1)
+		self.ui.verticalLayout_5.removeItem(qBox)
+
 
 		self.ui.verticalLayout.removeWidget(self.canvasA)
 		self.canvasA.deleteLater()
