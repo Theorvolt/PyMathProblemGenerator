@@ -7,13 +7,15 @@ import matplotlib
 from wolframclient.language import wl
 from wolframclient.language import wlexpr
 from wolframclient.evaluation import WolframLanguageSession
-from PIL import Image
 from wolframclient.language import Global
 from PyQt5.QtGui import QIcon, QPixmap
 import sys
 import oauthlib
 import oauthlib.oauth1
 import wolframclient.utils.json
+import packaging.specifiers
+import zmq
+import packaging.requirements
 
 class mywindow(QtWidgets.QMainWindow):
  
