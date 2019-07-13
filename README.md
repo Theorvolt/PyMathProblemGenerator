@@ -9,7 +9,7 @@ Make sure you have all the dependencies before proceeding. Open a terminal windo
 
 Run the executable after extracting the files from the download. For Windows users, run the file PyMathProblemGenerator.exe as is.
 
-For macOSX users, place repo.mx and definitions.mx inside the users/<your name here> directory then run the app.
+For macOSX users, place repo.mx and definitions.mx inside the users/(your name here) directory then run the app.
 
 Instructions for Linux users TBD.
 
