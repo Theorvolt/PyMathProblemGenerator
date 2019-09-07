@@ -24,9 +24,16 @@ class mywindow(QtWidgets.QMainWindow):
 		super(mywindow, self).__init__()
 		print(session.evaluate('''Directory[]'''))
 		self.imageQuestion = False
-		self.setFixedSize(800,600)
+		self.setFixedSize(1200,700)
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
+		self.white = False
+		self.textcolor = "white"
+		self.bg = self.palette().window().color()
+		self.cl = (self.bg.redF(),self.bg.greenF(), self.bg.blueF()) # Makes the color of the textbox the same as the app
+		if self.cl[0] > 0.5 and self.cl[1] > 0.5 and self.cl[2] >0.5:
+			self.white = True
+			self.textcolor = "black"
 
 		# https://stackoverflow.com/questions/41247109/pyqt-how-to-switch-widgets-in-qstackedwidget
 		# We can set up button functionality here instead.
@@ -49,6 +56,7 @@ class mywindow(QtWidgets.QMainWindow):
 
 		# to access difficulty do self.ui.difficultybox.currentText()
 
+	# For when you exit a menu and a question has been generated, this will remove the previous question and answer.
 	def refresh(self):
 		if self.ui.verticalLayout_5.count() < 2:
 			return
@@ -79,7 +87,12 @@ class mywindow(QtWidgets.QMainWindow):
 
 		topic=self.ui.topicbox.currentText()
 		difficulty=self.ui.difficultybox.currentText()
-		self.ui.stackedWidget.setCurrentIndex(2)
+		chk = session.evaluate(wlexpr('''TopicLength["'''+str(topic)+'''","'''+str(difficulty)+'''"]'''))
+		if chk == 0:
+			return
+		self.ui.stackedWidget.setCurrentIndex(2) # Go to question menu
+
+
 		qa=session.evaluate(wlexpr('''evalQuestion["'''+str(topic)+'''","'''+str(difficulty)+'''"]'''))
 		q =qa[0]
 		a=qa[1]
@@ -89,9 +102,8 @@ class mywindow(QtWidgets.QMainWindow):
 		self.questionDisplay.setObjectName("questionDisplay")
 		spaceLeft= QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
 		self.questionDisplay.addItem(spaceLeft)
-		bg = self.palette().window().color()
-		cl = (bg.redF(), bg.greenF(), bg.blueF())
-		self.question = Figure(facecolor=cl,edgecolor=cl)
+
+		self.question = Figure(facecolor=self.cl,edgecolor=self.cl)
 		self.canvasQ = FigureCanvas(self.question)
 		self.questionDisplay.addWidget(self.canvasQ)
 
@@ -99,7 +111,8 @@ class mywindow(QtWidgets.QMainWindow):
 				x=0.0, y=0.5, 
 				horizontalalignment='left',
 				verticalalignment='bottom',
-				fontsize=10)
+				fontsize=10,
+				color=self.textcolor)
 
 		self.canvasQ.draw()
 
@@ -109,18 +122,19 @@ class mywindow(QtWidgets.QMainWindow):
 
 
 
-		self.answer = Figure(facecolor=cl,edgecolor=cl)
+		self.answer = Figure(facecolor=self.cl,edgecolor=self.cl)
 		self.canvasA = FigureCanvas(self.answer)
 		self.ui.verticalLayout.addWidget(self.canvasA)
 		self.answer.suptitle(a,
 				x=0.0, y=0.6, 
 				horizontalalignment='left',
 				verticalalignment='top',
-				fontsize=10)
+				fontsize=10,
+				color=self.textcolor)
+
 		self.canvasA.draw()
 
-
-
+		# Image handling, if there is a 0 that means there is no image, otherwise do:
 		if img != 0:
 			self.imageQuestion = True
 			self.label1 = QtWidgets.QLabel(self)

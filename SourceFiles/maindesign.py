@@ -48,7 +48,7 @@ class mywindow(QtWidgets.QMainWindow):
 		print('''ToString['''+self.ui.lineEdit_3.text()+''']''')
 		print('''Hold['''+self.ui.lineEdit_2.text()+''']''')
 		print(self.ui.lineEdit.text())
-		print('''Hold['''+self.ui.lineEdit_4.text()+'''''')
+		print('''Hold['''+self.ui.lineEdit_4.text()+''']''')
 
 
 
