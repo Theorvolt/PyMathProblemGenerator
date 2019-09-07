@@ -3,13 +3,13 @@
 PyMathProblemGenerator is a problem generator coded in python using PyQt5 as a user interface and Wolfram Mathematica to render and compute mathematical problems.
 
 ## Building from source
-Make sure you have all the dependencies before proceeding. Open a terminal window then run pyinstaller PyMathProblemGenerator.spec in the same folder that the source code is located. The build should now appear in dist.
+Make sure you have all the dependencies before proceeding. Open a terminal window then run ```pyinstaller PyMathProblemGenerator.spec``` in the same folder that the source code is located. The build should now appear in dist.
 
 ## Installation
 
 Run the executable after extracting the files from the download. For Windows users, run the file PyMathProblemGenerator.exe as is.
 
-For macOSX users, place repo.mx and definitions.mx inside the users/<your name here> directory then run the app.
+For macOSX users, place repo.mx and definitions.mx inside the users/(your name here) directory then run the app.
 
 Instructions for Linux users TBD.
 
